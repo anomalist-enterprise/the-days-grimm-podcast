@@ -143,9 +143,10 @@ jobs:
         run: |
           BODY=$(cat sentinel-findings.json)
           SIG=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$INGEST_SECRET" -hex | sed 's/^.*= //')
-          curl -s -o /tmp/resp.json -w 'Sentinel ingest: %{http_code}
-' \
+          STATUS=$(curl -s -o /tmp/resp.json -w '%{http_code}' \
             -X POST -H 'Content-Type: application/json' \
             -H "X-Sentinel-Signature: $SIG" \
             --data-binary @sentinel-findings.json \
-            https://sentinel.whysharon.uk/api/scans/ingest
+            https://sentinel.whysharon.uk/api/scans/ingest)
+          echo "Sentinel ingest status: $STATUS"
+          [[ "$STATUS" == "200" ]] || { cat /tmp/resp.json; exit 1; }
