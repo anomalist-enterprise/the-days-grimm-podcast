@@ -1,11 +1,8 @@
-# Sentinel — caller workflow
+# Sentinel — standalone scan workflow
 #
-# This file gets vendored into every Sentinel-watched repo at
-# `.github/workflows/sentinel.yml`. It calls the reusable workflow that lives
-# in anomalist-enterprise/sentinel/.github/workflows/sentinel-scan.yml.
-#
-# Required repo secret: SENTINEL_INGEST_SECRET (set automatically by the
-# Sentinel onboarder using a Chris-owned PAT with `repo` scope).
+# For cross-org repos that can't `uses:` the AE org's private reusable workflow,
+# this is the full standalone scanner. Vendored verbatim into the repo at
+# .github/workflows/sentinel.yml.
 
 name: Sentinel
 on:
@@ -13,17 +10,142 @@ on:
     branches: [main, master]
   pull_request:
   schedule:
-    - cron: '0 6 * * 1'   # Monday 06:00 UTC weekly full scan
+    - cron: '0 6 * * 1'
   workflow_dispatch:
 
 permissions:
   contents: read
-  pull-requests: read
 
 jobs:
-  sentinel:
-    uses: anomalist-enterprise/sentinel/.github/workflows/sentinel-scan.yml@main
-    with:
-      trigger: ${{ github.event_name }}
-    secrets:
-      INGEST_SECRET: ${{ secrets.SENTINEL_INGEST_SECRET }}
+  scan:
+    name: Sentinel scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Capture start time
+        id: start
+        run: echo "ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect stack
+        id: stack
+        run: |
+          {
+            echo "has_npm_lock=$([[ -f package-lock.json ]] && echo 1 || echo 0)"
+            echo "has_pnpm_lock=$([[ -f pnpm-lock.yaml ]] && echo 1 || echo 0)"
+            echo "has_yarn_lock=$([[ -f yarn.lock ]] && echo 1 || echo 0)"
+            echo "has_python=$([[ -f requirements.txt || -f pyproject.toml ]] && echo 1 || echo 0)"
+            echo "has_cargo=$([[ -f Cargo.toml ]] && echo 1 || echo 0)"
+            echo "has_wrangler=$([[ -f wrangler.toml || -f wrangler.json || -f wrangler.jsonc ]] && echo 1 || echo 0)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: gitleaks
+        continue-on-error: true
+        run: |
+          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest \
+            detect --source=/repo --no-banner --report-format json \
+            --report-path /repo/sentinel-gitleaks.json --exit-code 0
+          [[ -f sentinel-gitleaks.json ]] || echo '[]' > sentinel-gitleaks.json
+
+      - name: npm audit
+        if: steps.stack.outputs.has_npm_lock == '1'
+        continue-on-error: true
+        run: |
+          npm audit --json --package-lock-only > sentinel-npm-audit.json 2>/dev/null || true
+          [[ -s sentinel-npm-audit.json ]] || echo '{}' > sentinel-npm-audit.json
+
+      - name: pnpm audit
+        if: steps.stack.outputs.has_pnpm_lock == '1'
+        continue-on-error: true
+        run: |
+          npm install -g pnpm@latest >/dev/null 2>&1
+          pnpm audit --json > sentinel-pnpm-audit.json 2>/dev/null || true
+          [[ -s sentinel-pnpm-audit.json ]] || echo '{}' > sentinel-pnpm-audit.json
+
+      - name: yarn audit
+        if: steps.stack.outputs.has_yarn_lock == '1'
+        continue-on-error: true
+        run: |
+          npm install -g yarn >/dev/null 2>&1
+          yarn audit --json > sentinel-yarn-audit.json 2>/dev/null || true
+          [[ -s sentinel-yarn-audit.json ]] || echo '{}' > sentinel-yarn-audit.json
+
+      - name: pip-audit
+        if: steps.stack.outputs.has_python == '1'
+        continue-on-error: true
+        run: |
+          python3 -m pip install --quiet pip-audit
+          pip-audit --format json -o sentinel-pip-audit.json 2>/dev/null || echo '{"dependencies":[]}' > sentinel-pip-audit.json
+
+      - name: cargo audit
+        if: steps.stack.outputs.has_cargo == '1'
+        continue-on-error: true
+        run: |
+          cargo install --quiet cargo-audit 2>/dev/null || true
+          cargo audit --json > sentinel-cargo-audit.json 2>/dev/null || echo '{"vulnerabilities":{"list":[]}}' > sentinel-cargo-audit.json
+
+      - name: wrangler binding lint
+        if: steps.stack.outputs.has_wrangler == '1'
+        continue-on-error: true
+        run: |
+          python3 - <<'PY' > sentinel-wrangler.json
+          import json, os, re
+          findings = []
+          for fname in ('wrangler.toml','wrangler.json','wrangler.jsonc'):
+              if not os.path.exists(fname): continue
+              content = open(fname).read()
+              for m in re.finditer(r'(?im)^\s*(SECRET|TOKEN|KEY|PASSWORD)\w*\s*=\s*"([^"]{8,})"', content):
+                  findings.append({'rule':'wrangler.hardcoded_secret','file':fname,'line':content[:m.start()].count('
+')+1,'matched_var':m.group(1),'severity':'high'})
+              if re.search(r'(?im)^\s*workers_dev\s*=\s*true', content):
+                  findings.append({'rule':'wrangler.workers_dev_enabled','file':fname,'line':0,'severity':'low'})
+          print(json.dumps({'findings': findings}))
+          PY
+
+      - name: Aggregate
+        run: |
+          python3 - <<'PY'
+          import os, json, hashlib, datetime, sys
+          def fp(*p): return hashlib.sha256(":".join(str(x) for x in p).encode()).hexdigest()
+          def load(path, default):
+              try: return json.load(open(path))
+              except: return default
+          findings, scanners = [], []
+          gl = load('sentinel-gitleaks.json', [])
+          scanners.append({'name':'gitleaks','status':'ok','count':len(gl)})
+          for it in gl or []:
+              findings.append({'type':'secret','severity':'critical','title':it.get('Description','Secret detected'),'file':it.get('File'),'line':it.get('StartLine'),'fingerprint':fp('gitleaks',it.get('RuleID'),it.get('File'),it.get('StartLine')),'detail':{'rule_id':it.get('RuleID'),'commit':it.get('Commit'),'redacted_match':(it.get('Match') or '')[:100]}})
+          if os.path.exists('sentinel-npm-audit.json'):
+              na = load('sentinel-npm-audit.json', {})
+              vulns = (na.get('vulnerabilities') or {})
+              scanners.append({'name':'npm-audit','status':'ok','count':len(vulns)})
+              for pkg, v in vulns.items():
+                  sm = {'critical':'critical','high':'high','moderate':'medium','low':'low','info':'info'}
+                  sev = sm.get(v.get('severity','info'), 'info')
+                  fix = v.get('fixAvailable', False)
+                  findings.append({'type':'dep_vuln','severity':sev,'title':f"{pkg} — {sev} severity",'file':'package.json','fingerprint':fp('npm',pkg,sev),'detail':{'package':pkg,'range':v.get('range'),'fix_available':bool(fix),'fix_kind':'patch' if (isinstance(fix,dict) and fix.get('isSemVerMajor') is False) else 'major' if isinstance(fix,dict) else None}})
+          for fname, scanner_name in [('sentinel-wrangler.json','wrangler-lint'),('sentinel-pnpm-audit.json','pnpm-audit'),('sentinel-yarn-audit.json','yarn-audit'),('sentinel-pip-audit.json','pip-audit'),('sentinel-cargo-audit.json','cargo-audit')]:
+              if os.path.exists(fname):
+                  scanners.append({'name':scanner_name,'status':'ok','count':0})
+          payload = {'schema_version':1,'repo':os.environ['GITHUB_REPOSITORY'],'sha':os.environ['GITHUB_SHA'],'ref':os.environ['GITHUB_REF'],'run_id':int(os.environ.get('GITHUB_RUN_ID','0')),'trigger':os.environ.get('GITHUB_EVENT_NAME','manual'),'started_at':os.environ.get('SENTINEL_START',''),'finished_at':datetime.datetime.now(datetime.timezone.utc).isoformat().replace('+00:00','Z'),'scanners':scanners,'findings':findings}
+          with open('sentinel-findings.json','w') as f: json.dump(payload,f,separators=(',',':'))
+          print(f"Aggregated {len(findings)} finding(s)", file=sys.stderr)
+          PY
+        env:
+          SENTINEL_START: ${{ steps.start.outputs.ts }}
+
+      - name: POST to Sentinel
+        env:
+          INGEST_SECRET: ${{ secrets.SENTINEL_INGEST_SECRET }}
+        run: |
+          BODY=$(cat sentinel-findings.json)
+          SIG=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$INGEST_SECRET" -hex | sed 's/^.*= //')
+          curl -s -o /tmp/resp.json -w 'Sentinel ingest: %{http_code}
+' \
+            -X POST -H 'Content-Type: application/json' \
+            -H "X-Sentinel-Signature: $SIG" \
+            --data-binary @sentinel-findings.json \
+            https://sentinel.whysharon.uk/api/scans/ingest
