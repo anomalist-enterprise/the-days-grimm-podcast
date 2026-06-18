@@ -1,0 +1,8 @@
+name = "tdg-blog-cron"
+main = "index.js"
+compatibility_date = "2024-11-01"
+workers_dev = false
+
+# Weekly: Mondays 14:00 UTC — generate a blog post for the newest episode without one.
+[triggers]
+crons = ["0 14 * * 1"]

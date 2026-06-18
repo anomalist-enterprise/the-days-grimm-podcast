@@ -1,21 +1,16 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { useEffect, useState, useRef } from 'react'
-import { fetchRedditBlogPosts, type RedditBlogPost, type RedditBlogResponse } from '../services/blog'
+import { fetchBlogPosts, type BlogPost } from '../services/blog'
 import blogBackground from '../../public/blog-background.webp'
 
 const Blog: React.FC = () => {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
-  
-  // Parallax effect for background
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  })
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"])
-  
-  const [posts, setPosts] = useState<RedditBlogPost[]>([])
-  const [debugInfo, setDebugInfo] = useState<RedditBlogResponse['debug']>()
+  const isInView = useInView(ref, { once: true, margin: '-100px' })
+
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
+
+  const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [visibleCount, setVisibleCount] = useState<number>(4)
@@ -24,45 +19,34 @@ const Blog: React.FC = () => {
     let isMounted = true
     ;(async () => {
       try {
-        const data = await fetchRedditBlogPosts(12, { debug: import.meta.env.DEV })
+        const data = await fetchBlogPosts(12)
         if (isMounted) {
           setPosts(data.posts || [])
-          setDebugInfo(data.debug)
           setLoading(false)
         }
       } catch {
         if (isMounted) {
-          setError('Failed to load blog posts')
+          setError('Failed to load posts')
           setLoading(false)
         }
       }
     })()
-    return () => { isMounted = false }
-  }, [])
-
-  // Log debug info to console only in development; never render it in UI
-  useEffect(() => {
-    if (import.meta.env.DEV && debugInfo) {
-      // eslint-disable-next-line no-console
-      // Debug info available but not logged in production
+    return () => {
+      isMounted = false
     }
-  }, [debugInfo])
+  }, [])
 
   return (
     <section id="blog" className="relative min-h-screen py-20 overflow-hidden" ref={ref}>
       {/* Parallax Background */}
-      <motion.div 
-        className="absolute inset-0 will-change-transform"
-        style={{ y: backgroundY }}
-      >
-        <div 
+      <motion.div className="absolute inset-0 will-change-transform" style={{ y: backgroundY }}>
+        <div
           className="absolute inset-0 bg-cover bg-center bg-fixed"
           style={{ backgroundImage: `url(${blogBackground})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
       </motion.div>
 
-      {/* Content */}
       <div className="container relative z-10">
         <motion.div
           className="text-center mb-16"
@@ -70,16 +54,14 @@ const Blog: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-5xl sm:text-6xl font-bold mb-6 gradient-text">
-            Our Blog
-          </h2>
+          <h2 className="text-5xl sm:text-6xl font-bold mb-6 gradient-text">Our Blog</h2>
           <p className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
-            Dive into the darker corners of storytelling with our latest thoughts, insights, and discussions.
+            Episode recaps, stories, and the darker corners of every conversation.
           </p>
         </motion.div>
 
         {loading && (
-          <motion.div 
+          <motion.div
             className="text-center py-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -93,7 +75,7 @@ const Blog: React.FC = () => {
         )}
 
         {error && (
-          <motion.div 
+          <motion.div
             className="text-center py-12"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -109,103 +91,70 @@ const Blog: React.FC = () => {
           <>
             <div className="max-w-4xl mx-auto space-y-8">
               {posts.slice(0, visibleCount).map((post, index) => (
-                <motion.article
-                  key={post.id}
-                  className="group"
+                <motion.a
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="block group"
                   initial={{ opacity: 0, y: 50 }}
                   animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
                   transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
                 >
-                  <div className="bg-dark/40 backdrop-blur-sm rounded-2xl border border-dark-border/50 p-8 hover:bg-dark/60 hover:border-primary/30 transition-all duration-500 group-hover:-translate-y-1">
-                    <div className="flex flex-col sm:flex-row sm:items-start gap-6">
-                      <div className="flex-1">
-                        <motion.h3 
-                          className="text-2xl font-bold mb-4 text-white group-hover:text-primary transition-colors duration-300"
-                          whileHover={{ scale: 1.02 }}
-                        >
-                          {post.title}
-                        </motion.h3>
-                        <p className="text-text-secondary text-lg leading-relaxed mb-6">
-                          {post.selftext 
-                            ? `${post.selftext.slice(0, 300)}${post.selftext.length > 300 ? '...' : ''}` 
-                            : 'Click to read the full post on Reddit and join the discussion.'
-                          }
-                        </p>
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                          <div className="flex items-center gap-4 text-text-muted">
-                            <span className="text-sm">
-                              {new Date(post.createdUtc * 1000).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                              })}
-                            </span>
-                          </div>
-                          <motion.a
-                            href={post.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-light text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary/30 transition-all duration-300"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            Read Full Post
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                          </motion.a>
-                        </div>
-                      </div>
+                  <div className="bg-dark/40 backdrop-blur-sm rounded-2xl border border-primary/20 p-8 hover:bg-dark/60 hover:border-primary/40 transition-all duration-500 group-hover:-translate-y-1">
+                    <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-primary transition-colors duration-300">
+                      {post.title}
+                    </h3>
+                    <p className="text-text-secondary text-lg leading-relaxed mb-6">{post.excerpt}</p>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <span className="text-sm text-text-muted">
+                        {new Date(post.published_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </span>
+                      <span className="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all duration-300">
+                        Read post
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                      </span>
                     </div>
                   </div>
-                </motion.article>
+                </motion.a>
               ))}
             </div>
 
             {posts.length > visibleCount && (
-              <motion.div 
+              <motion.div
                 className="text-center mt-12"
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
               >
-                {visibleCount < 16 ? (
-                  <motion.button
-                    className="bg-dark/60 backdrop-blur-sm text-white border-2 border-primary hover:bg-primary hover:border-primary px-8 py-4 rounded-xl font-semibold transition-all duration-300 mr-4"
-                    onClick={() => setVisibleCount((v) => Math.min(v + 4, 16))}
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Load 4 More Posts
-                  </motion.button>
-                ) : (
-                  <motion.a
-                    href="https://www.reddit.com/r/thedaysgrimm"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-dark/60 backdrop-blur-sm text-white border-2 border-primary hover:bg-primary hover:border-primary px-8 py-4 rounded-xl font-semibold transition-all duration-300 inline-block"
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Visit Our Reddit Community
-                  </motion.a>
-                )}
+                <motion.button
+                  className="bg-dark/60 backdrop-blur-sm text-white border-2 border-primary hover:bg-primary px-8 py-4 rounded-xl font-semibold transition-all duration-300"
+                  onClick={() => setVisibleCount((v) => v + 4)}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Load More Posts
+                </motion.button>
               </motion.div>
             )}
           </>
         ) : (
-          !loading && !error && (
+          !loading &&
+          !error && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.6 }}
               className="text-center py-20"
             >
-              <div className="bg-dark/60 backdrop-blur-sm rounded-2xl border border-dark-border/50 p-12 max-w-2xl mx-auto">
+              <div className="bg-dark/60 backdrop-blur-sm rounded-2xl border border-primary/20 p-12 max-w-2xl mx-auto">
                 <h3 className="text-3xl font-bold mb-6 gradient-text">Coming Soon</h3>
                 <p className="text-xl text-text-secondary leading-relaxed">
-                  We're working on bringing you the latest posts from our community. 
-                  Stay tuned for thought-provoking content and discussions.
+                  Fresh posts are on the way — episode recaps and stories from behind the mic. Check back soon.
                 </p>
               </div>
             </motion.div>
@@ -216,4 +165,4 @@ const Blog: React.FC = () => {
   )
 }
 
-export default Blog 
+export default Blog

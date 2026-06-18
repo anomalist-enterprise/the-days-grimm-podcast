@@ -6,3 +6,12 @@ compatibility_date = "2024-11-01"
 [[kv_namespaces]]
 binding = "EPISODES_CACHE"
 id = "86cb87280cf843a3b450c4d2040d0ca4"
+
+# AI blog: D1 store + Workers AI generation
+[ai]
+binding = "AI"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "the-days-grimm-blog"
+database_id = "11d4b7e3-18bd-4764-a66c-c64791f07149"

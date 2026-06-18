@@ -1,5 +1,16 @@
 # DEVLOG — The Days Grimm Podcast
 
+## 2026-06-18 — macbook-thomas — D1 AI-written blog (final feature) + weekly cron
+
+Did:
+- **D1 database** `the-days-grimm-blog` (id 11d4b7e3-18bd-4764-a66c-c64791f07149), table `posts` (schema.sql). Bound to Pages as `DB`; Workers AI bound as `AI` (wrangler.toml).
+- **Generator** `functions/api/blog/generate.js` (POST, header `x-admin-key` = Pages secret BLOG_ADMIN_KEY, also in ~/.config/tdg/cloudflare.env): picks newest episode without a post, Workers AI (`@cf/meta/llama-3.3-70b-instruct-fp8-fast`) writes an SEO post grounded ONLY in episode title+description (no fabrication), stores in D1. NOTE: model returns delimited TITLE/EXCERPT/BODY (NOT JSON — multi-line body broke JSON.parse; that was the first-attempt bug).
+- **List** `functions/api/blog/posts.js` (GET, from D1). **SSR post pages** `functions/blog/[slug].js` — full branded HTML, Article JSON-LD + canonical + OG (the real SEO win; crawlable, unlike the SPA). Removed `functions/api/blog/reddit.js`.
+- **Blog.tsx + services/blog.ts** rewritten: reads /api/blog/posts, cards link to /blog/<slug>. Seeded 3 posts (#267/#266/#265). VERIFIED rendering.
+- **Weekly cron**: standalone Worker `~/the-days-grimm-podcast/blog-cron/` (`tdg-blog-cron`, cron `0 14 * * 1` Mon 14:00 UTC) POSTs the generate endpoint. Gotcha: cron schedule 403'd until a **workers.dev subdomain** was registered for the account (did it: subdomain "thedaysgrimm"); worker has workers_dev=false.
+
+Blog is now fully built + automated (was the last open item). NEXT (optional): sitemap should include /blog/<slug> (currently static single-URL); content-quality review (cross-vendor judge per SEOPLAYBOOK); delete Vercel project.
+
 ## 2026-06-18 — macbook-thomas — Cloudflare migration phase 2: backend as Pages Functions + cutover
 
 Did:
