@@ -64,29 +64,26 @@ const Hosts: React.FC = () => {
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <div className="relative group">
-                      {/* Artistic Border */}
-                      <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-primary/10 rounded-3xl transform rotate-3 group-hover:rotate-6 transition-transform duration-300"></div>
-                      <div className="absolute -inset-2 bg-gradient-to-l from-primary/30 to-primary/20 rounded-2xl transform -rotate-2 group-hover:-rotate-4 transition-transform duration-300"></div>
-                      
-                      <div className="relative w-64 h-64 rounded-2xl overflow-hidden border-4 border-white/20 shadow-xl shadow-white/10">
-                        {isInView && (
-                          <picture>
-                            <source 
-                              srcSet={host.name === 'Brian' ? '/Brian_Day.webp' : '/Thomas_Grimm.webp'} 
-                              type="image/webp" 
-                            />
-                            <img 
-                              src={host.name === 'Brian' ? '/Brian_Day.jpg' : '/Thomas_Grimm.jpg'} 
-                              alt={`${host.name} profile`}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                              loading="lazy"
-                              decoding="async"
-                              fetchPriority="low"
-                            />
-                          </picture>
-                        )}
-                      </div>
+                    <div className="relative group flex items-center justify-center">
+                      {/* On-brand red glow behind the cutout */}
+                      <div className="absolute w-60 h-60 sm:w-72 sm:h-72 bg-primary/25 rounded-full blur-3xl group-hover:bg-primary/40 transition-all duration-500 pointer-events-none"></div>
+
+                      {isInView && (
+                        <picture>
+                          <source
+                            srcSet={host.name === 'Brian' ? '/Brian_Day.webp' : '/Thomas_Grimm.webp'}
+                            type="image/webp"
+                          />
+                          <img
+                            src={host.name === 'Brian' ? '/Brian_Day.png' : '/Thomas_Grimm.png'}
+                            alt={`${host.name}, co-host of The Days Grimm Podcast`}
+                            className="relative w-72 h-72 sm:w-80 sm:h-80 object-contain drop-shadow-2xl"
+                            loading="lazy"
+                            decoding="async"
+                            fetchPriority="low"
+                          />
+                        </picture>
+                      )}
                     </div>
                   </motion.div>
 

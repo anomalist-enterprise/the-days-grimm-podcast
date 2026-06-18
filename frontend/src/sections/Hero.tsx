@@ -1,90 +1,34 @@
 import { motion } from 'framer-motion'
 import { Play } from 'lucide-react'
-import { useState, useEffect } from 'react'
 
 interface HeroProps {
   scrollToSection: (sectionId: string) => void
 }
 
 const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
-  const [allContentReady, setAllContentReady] = useState(false)
-
-  useEffect(() => {
-    // Preload videos and wait a minimum time for smooth experience
-    const video1 = document.createElement('video')
-    const video2 = document.createElement('video')
-    
-    video1.src = '/hero.mp4'
-    video2.src = '/hero-mobile.mp4'
-    
-    let loadedCount = 0
-    const minimumLoadTime = 800 // Minimum 800ms for smooth experience
-    const startTime = Date.now()
-    
-    const checkIfReady = () => {
-      const timeElapsed = Date.now() - startTime
-      if (loadedCount >= 2 && timeElapsed >= minimumLoadTime) {
-        setAllContentReady(true)
-      } else if (loadedCount >= 2) {
-        // Videos loaded but not enough time passed - wait remaining time
-        setTimeout(() => setAllContentReady(true), minimumLoadTime - timeElapsed)
-      }
-    }
-    
-    const handleLoad = () => {
-      loadedCount++
-      checkIfReady()
-    }
-    
-    video1.addEventListener('loadeddata', handleLoad)
-    video2.addEventListener('loadeddata', handleLoad)
-    
-    video1.load()
-    video2.load()
-    
-    // Fallback timeout in case videos take too long
-    const fallbackTimeout = setTimeout(() => {
-      setAllContentReady(true)
-    }, 5000)
-    
-    return () => {
-      video1.removeEventListener('loadeddata', handleLoad)
-      video2.removeEventListener('loadeddata', handleLoad)
-      clearTimeout(fallbackTimeout)
-    }
-  }, [])
-
-  // Show nothing until everything is ready
-  if (!allContentReady) {
-    return (
-      <section id="home" className="relative min-h-[80vh] sm:min-h-screen flex items-center bg-dark pt-16 sm:pt-20 overflow-hidden">
-        {/* Just dark background while loading */}
-        <div className="absolute inset-0 bg-dark" />
-      </section>
-    )
-  }
-
   return (
     <section id="home" className="relative min-h-[80vh] sm:min-h-screen flex items-center bg-dark pt-16 sm:pt-20 overflow-hidden">
-      {/* Background videos - show immediately when ready */}
+      {/* Background videos - poster paints instantly for fast LCP, video streams in after */}
       <video
         className="absolute inset-0 w-full h-full object-cover hidden sm:block"
         src="/hero.mp4"
+        poster="/hero-poster.jpg"
         autoPlay
         loop
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
       />
 
       <video
         className="absolute inset-0 w-full h-full object-cover sm:hidden pointer-events-none"
         src="/hero-mobile.mp4"
+        poster="/hero-poster-mobile.jpg"
         autoPlay
         loop
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
       />
       
       {/* Overlay for readability */}

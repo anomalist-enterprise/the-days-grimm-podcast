@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://thedaysgrimmpodcast.com/sitemap.xml
+Sitemap: https://www.thedaysgrimm.com/sitemap.xml
 
 # Common crawl optimization
 Crawl-delay: 1

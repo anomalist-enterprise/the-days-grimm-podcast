@@ -13,28 +13,34 @@
     
     <!-- SEO Meta Tags -->
     <title>The Days Grimm Podcast - Indiana's Darkest Stories</title>
-    <meta name="description" content="Exploring the darker side of life, one episode at a time. The Days Grimm Podcast - Indiana's most comical, thrilling, and controversial podcast featuring true crime, horror stories, and unfiltered conversations." />
-    <meta name="keywords" content="podcast, comedy, interviews, true crime, horror, The Days Grimm, Brian Day, Thomas Grimm, Indiana podcast, dark comedy, controversial topics" />
-    <meta name="author" content="The Days Grimm Podcast" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://thedaysgrimmpodcast.com/" />
-    
+    <meta name="description" content="Arguably Indiana's most comical, thrilling, and controversial podcast — comedy interviews with extraordinary guests and unfiltered conversations, hosted by Brian Day and Thomas Grimm. Listen on Spotify, Apple Podcasts, and YouTube." />
+    <meta name="keywords" content="The Days Grimm, The Days Grimm Podcast, Indiana podcast, comedy interviews, comedy podcast, interview podcast, Brian Day, Thomas Grimm, controversial podcast" />
+    <meta name="author" content="The Days Grimm" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <link rel="canonical" href="https://www.thedaysgrimm.com/" />
+
+    <!-- Podcast RSS feed (discoverability) -->
+    <link rel="alternate" type="application/rss+xml" title="The Days Grimm Podcast" href="https://rss.buzzsprout.com/1536079.rss" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="The Days Grimm Podcast - Indiana's Darkest Stories" />
-    <meta property="og:description" content="Exploring the darker side of life, one episode at a time. Indiana's most comical, thrilling, and controversial podcast." />
-    <meta property="og:url" content="https://thedaysgrimmpodcast.com/" />
+    <meta property="og:description" content="Indiana's most comical, thrilling, and controversial podcast — comedy interviews with extraordinary guests, hosted by Brian Day and Thomas Grimm." />
+    <meta property="og:url" content="https://www.thedaysgrimm.com/" />
     <meta property="og:site_name" content="The Days Grimm Podcast" />
-    <meta property="og:image" content="/aboutUs.jpg" />
+    <meta property="og:image" content="https://www.thedaysgrimm.com/aboutUs.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Days Grimm Podcast — hosts Brian Day and Thomas Grimm" />
     <meta property="og:locale" content="en_US" />
-    
+
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="The Days Grimm Podcast - Indiana's Darkest Stories" />
-    <meta name="twitter:description" content="Exploring the darker side of life, one episode at a time. Indiana's most comical, thrilling, and controversial podcast." />
-    <meta name="twitter:image" content="/aboutUs.jpg" />
+    <meta name="twitter:description" content="Indiana's most comical, thrilling, and controversial podcast — comedy interviews with extraordinary guests, hosted by Brian Day and Thomas Grimm." />
+    <meta name="twitter:image" content="https://www.thedaysgrimm.com/aboutUs.jpg" />
+    <meta name="twitter:image:alt" content="The Days Grimm Podcast — hosts Brian Day and Thomas Grimm" />
     <meta name="twitter:creator" content="@thedaysgrimm" />
     <meta name="twitter:site" content="@thedaysgrimm" />
     
@@ -42,46 +48,64 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "PodcastSeries",
-      "name": "The Days Grimm Podcast",
-      "description": "Exploring the darker side of life, one episode at a time. Indiana's most comical, thrilling, and controversial podcast.",
-      "url": "https://thedaysgrimmpodcast.com/",
-      "author": [
+      "@graph": [
         {
-          "@type": "Person",
-          "name": "Brian Day",
-          "jobTitle": "Podcast Host"
+          "@type": "PodcastSeries",
+          "@id": "https://www.thedaysgrimm.com/#podcast",
+          "name": "The Days Grimm Podcast",
+          "url": "https://www.thedaysgrimm.com/",
+          "description": "Arguably Indiana's most comical, thrilling, and controversial podcast. Comedy interviews with extraordinary guests and unfiltered conversations, hosted by Brian Day and Thomas Grimm.",
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/83/33/40/833340a6-7321-fe5b-f008-2e894fc7ff6e/mza_11440359026889631803.jpg/600x600bb.jpg",
+          "webFeed": "https://rss.buzzsprout.com/1536079.rss",
+          "datePublished": "2020-12-06",
+          "inLanguage": "en-US",
+          "genre": ["Comedy", "Comedy Interviews", "Interviews"],
+          "author": [
+            { "@type": "Person", "name": "Brian Day", "jobTitle": "Podcast Host" },
+            { "@type": "Person", "name": "Thomas Grimm", "jobTitle": "Podcast Host" }
+          ],
+          "publisher": { "@id": "https://www.thedaysgrimm.com/#org" },
+          "potentialAction": {
+            "@type": "ListenAction",
+            "target": [
+              "https://open.spotify.com/show/3JLH1IVdjohOrAOoXTsk18",
+              "https://podcasts.apple.com/us/podcast/the-days-grimm-podcast/id1545803797",
+              "https://www.youtube.com/c/TheDaysGrimm"
+            ]
+          },
+          "sameAs": [
+            "https://www.instagram.com/thedaysgrimmpodcast/",
+            "https://www.facebook.com/thedaysgrimm/",
+            "https://twitter.com/thedaysgrimm",
+            "https://www.youtube.com/c/TheDaysGrimm",
+            "https://open.spotify.com/show/3JLH1IVdjohOrAOoXTsk18",
+            "https://podcasts.apple.com/us/podcast/the-days-grimm-podcast/id1545803797"
+          ]
         },
         {
-          "@type": "Person", 
-          "name": "Thomas Grimm",
-          "jobTitle": "Podcast Host"
+          "@type": "Organization",
+          "@id": "https://www.thedaysgrimm.com/#org",
+          "name": "The Days Grimm LLC",
+          "alternateName": "The Days Grimm",
+          "url": "https://www.thedaysgrimm.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.thedaysgrimm.com/Logo.svg"
+          },
+          "sameAs": [
+            "https://www.instagram.com/thedaysgrimmpodcast/",
+            "https://www.facebook.com/thedaysgrimm/",
+            "https://www.youtube.com/c/TheDaysGrimm"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.thedaysgrimm.com/#website",
+          "url": "https://www.thedaysgrimm.com/",
+          "name": "The Days Grimm Podcast",
+          "inLanguage": "en-US",
+          "publisher": { "@id": "https://www.thedaysgrimm.com/#org" }
         }
-      ],
-      "genre": ["Comedy", "True Crime", "Horror", "Interviews"],
-      "inLanguage": "en-US",
-      "publisher": {
-        "@type": "Organization",
-        "name": "The Days Grimm Podcast",
-        "url": "https://thedaysgrimmpodcast.com/",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "/aboutUs.jpg"
-        }
-      },
-      "potentialAction": {
-        "@type": "ListenAction",
-        "target": [
-          "https://open.spotify.com/show/3JLH1IVdjohOrAOoXTsk18",
-          "https://podcasts.apple.com/us/podcast/the-days-grimm-podcast/id1545803797",
-          "https://www.youtube.com/c/TheDaysGrimm"
-        ]
-      },
-      "sameAs": [
-        "https://www.instagram.com/thedaysgrimmpodcast/",
-        "https://www.facebook.com/thedaysgrimm/",
-        "https://twitter.com/thedaysgrimm",
-        "https://www.youtube.com/c/TheDaysGrimm"
       ]
     }
     </script>

@@ -139,7 +139,7 @@ router.get('/reddit', async (req, res) => {
 
         const jsonResponse = await axios.get(jsonUrl, {
           headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; TheDaysGrimmPodcast/1.0; +https://thedaysgrimmpodcast.com)',
+            'User-Agent': 'Mozilla/5.0 (compatible; TheDaysGrimmPodcast/1.0; +https://www.thedaysgrimm.com)',
             'Accept': 'application/json',
             'Accept-Language': 'en-US,en;q=0.9',
             'Cache-Control': 'no-cache'
