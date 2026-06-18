@@ -9,7 +9,9 @@ Did:
 - **wrangler.toml** (Pages: pages_build_output_dir=dist, KV binding EPISODES_CACHE id 86cb8728…).
 - Blog playlists for reference: Full Length=PLEU_P6cu46UblHKQr3cADL3nIxWNoUddq, DOTW=PLEU_P6cu46UbwTka6USmepiRYbmzGNnRk, Comedy Cache=PLEU_P6cu46UZuBj4TlINjFmkDbIetyGUK.
 
-Cutover (live DNS — see next note): apex A 216.198.79.1 + www CNAME 91f219462bd02a6f.vercel-dns-017.com → repoint to the-days-grimm.pages.dev. ROLLBACK = restore those two values. Keep all TXT/email (DMARC/DKIM/SPF/_vercel) records.
+Cutover (live DNS): apex A 216.198.79.1 + www CNAME 91f219462bd02a6f.vercel-dns-017.com → repointed to the-days-grimm.pages.dev. ROLLBACK = restore those two values (apex was A type). Email/TXT (DMARC/DKIM/SPF/_vercel) left untouched.
+
+**CUTOVER COMPLETE 2026-06-18**: both thedaysgrimm.com + www live on Cloudflare Pages (200, /api/episodes serving 15 eps from KV-cached Pages Function). apex→www 301 via `functions/_middleware.js` (token lacks redirect-rule perms, so done in-code). Pages custom-domain status: www active, apex serving (status flag lagged). Vercel now bypassed (project still exists — delete after a few days of confidence). NEXT: D1 AI-written blog (re-enable Blog section); optional delete Vercel project; optional R2 for hero video.
 
 ## 2026-06-18 — macbook-thomas — Cloudflare migration: frontend live on Pages (phase 1)
 
