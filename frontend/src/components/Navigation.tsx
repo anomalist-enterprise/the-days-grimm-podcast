@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Youtube } from 'lucide-react'
+
+const SUBSCRIBE_URL = 'https://www.youtube.com/c/TheDaysGrimm?sub_confirmation=1'
 
 interface NavigationProps {
   scrollToSection: (sectionId: string) => void
@@ -31,18 +33,29 @@ const Navigation: React.FC<NavigationProps> = ({ scrollToSection }) => {
           </div>
           
           {/* Desktop Menu */}
-          <ul className="hidden md:flex space-x-8">
-            {navItems.map((item) => (
-              <li key={item}>
-                <button
-                  onClick={() => scrollToSection(item)}
-                  className="text-text-primary hover:text-primary transition-colors duration-300 font-medium capitalize"
-                >
-                  {item}
-                </button>
-              </li>
-            ))}
-          </ul>
+          <div className="hidden md:flex items-center space-x-8">
+            <ul className="flex space-x-8">
+              {navItems.map((item) => (
+                <li key={item}>
+                  <button
+                    onClick={() => scrollToSection(item)}
+                    className="text-text-primary hover:text-primary transition-colors duration-300 font-medium capitalize"
+                  >
+                    {item}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <a
+              href={SUBSCRIBE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary py-2 px-5 text-sm"
+            >
+              <Youtube size={16} />
+              Subscribe
+            </a>
+          </div>
 
           {/* Mobile Menu Button */}
           <button
@@ -72,6 +85,17 @@ const Navigation: React.FC<NavigationProps> = ({ scrollToSection }) => {
                   </button>
                 </li>
               ))}
+              <li>
+                <a
+                  href={SUBSCRIBE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary w-full justify-center mt-2"
+                >
+                  <Youtube size={16} />
+                  Subscribe
+                </a>
+              </li>
             </ul>
           </motion.div>
         )}

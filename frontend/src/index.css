@@ -1,10 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #ff6b6b;
-  --color-primary-light: #ff8e8e;
-  --color-primary-dark: #cc0000;
+  /* Blood-crimson on near-black */
+  --color-primary: #dc2626;
+  --color-primary-light: #ef4444;
+  --color-primary-dark: #991b1b;
   --color-dark: #0a0a0a;
   --color-dark-light: #1a1a1a;
   --color-dark-lighter: #2a2a2a;
@@ -15,6 +16,7 @@
   --color-text-muted: #888888;
 
   --font-family-inter: 'Inter', sans-serif;
+  --font-display: 'Anton', 'Inter', sans-serif;
 
   --animate-fade-in: fadeIn 0.6s ease-in-out;
   --animate-slide-up: slideUp 0.6s ease-out;
@@ -53,6 +55,15 @@
     overflow-x: hidden;
   }
 
+  /* Display face on the big headings for cinematic, poster-style impact */
+  h1, h2 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.05;
+    font-weight: 400;
+  }
+
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
@@ -68,7 +79,7 @@
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #ff6b6b;
+    background: #dc2626;
   }
 }
 
@@ -133,7 +144,7 @@
   .glitch-text {
     position: relative;
     color: #ffffff;
-    text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
     animation: glitch 3s infinite;
   }
 
@@ -149,7 +160,7 @@
 
   .glitch-text::before {
     animation: glitch-1 2s infinite;
-    color: #ff6b6b;
+    color: #dc2626;
     z-index: -1;
   }
 

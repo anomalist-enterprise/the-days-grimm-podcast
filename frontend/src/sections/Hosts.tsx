@@ -99,7 +99,7 @@ const Hosts: React.FC = () => {
                       <p className="text-primary font-semibold text-lg uppercase tracking-wider mb-6">{host.title}</p>
                     </div>
                     
-                    <div className="bg-dark/40 backdrop-blur-sm rounded-2xl border border-white/10 p-6 shadow-lg shadow-white/5">
+                    <div className="bg-dark/40 backdrop-blur-sm rounded-2xl border border-white/10 p-6 shadow-lg shadow-black/30">
                       <p className="text-text-secondary mb-4 leading-relaxed text-lg">{host.description}</p>
                       <p className="text-text-secondary leading-relaxed">{host.bio}</p>
                     </div>
@@ -153,7 +153,7 @@ const Hosts: React.FC = () => {
           <div className="absolute -inset-8 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 rounded-3xl transform rotate-1"></div>
           <div className="absolute -inset-4 bg-gradient-to-tl from-primary/15 via-transparent to-primary/10 rounded-2xl transform -rotate-1"></div>
           
-          <div className="relative bg-dark/60 backdrop-blur-sm rounded-2xl border border-white/20 p-12 text-center shadow-xl shadow-white/10 hover:shadow-white/20 transition-all duration-500">
+          <div className="relative bg-dark/60 backdrop-blur-sm rounded-2xl border border-primary/20 p-12 text-center shadow-xl shadow-black/40 hover:shadow-primary/20 transition-all duration-500">
             <motion.div
               className="flex items-center justify-center gap-3 mb-6"
               initial={{ opacity: 0, scale: 0.8 }}

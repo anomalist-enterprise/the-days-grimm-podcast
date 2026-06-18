@@ -1,5 +1,21 @@
 # DEVLOG — The Days Grimm Podcast
 
+## 2026-06-18 — macbook-thomas — Visual redesign (round 1) benchmarked vs top podcast sites
+
+Direction (Thomas's picks): blood-crimson palette · bold display headings + Inter body · embed latest YouTube episode in hero. Researched top-10 podcast sites (HEARD model; hero must let you listen in <5s, don't bounce visitors to Spotify).
+
+Did:
+- **Design tokens** (`index.css`): primary → blood-crimson (#dc2626/#ef4444/#991b1b); added `--font-display: Anton` (Google Fonts) + base rule applying it (uppercase, tracking) to all h1/h2; recolored scrollbar + glitch accents.
+- **Hero** rewrite: display title ("THE DAYS / GRIMM", GRIMM in crimson), eyebrow, three-pillar line, Browse/Subscribe CTAs, "Listen on" Spotify/Apple/YouTube row, and an always-latest **YouTube embed** via uploads playlist `UUHHNbhsJepjr0rsWh1FNjgQ` (UC→UU; no backend/API-key dependency). Kept poster-first video bg. Fixed mobile overflow (stacked GRIMM, tamed eyebrow tracking).
+- **Nav**: persistent crimson Subscribe CTA (desktop + mobile menu).
+- **Episodes/Hosts**: swapped jarring white borders/glows (`border-white/60`, `shadow-white/*`) → subtle crimson/black on dark.
+- **CSP fix** (`vercel.json`): added `frame-src https://www.youtube-nocookie.com https://www.youtube.com` — without it the hero embed is blocked in prod.
+- Verified: `npm run build` green; screenshotted hero desktop+mobile via headless Chrome on `vite preview`.
+
+Channel ID: UCHHNbhsJepjr0rsWh1FNjgQ (uploads playlist UU…). Embed uses youtube-nocookie.
+
+NEXT (redesign round 2, not yet done): apply display type/crimson polish to About/Blog/Contact; consider a "featured/start-here" episode; FAQ section (+FAQPage schema) for AEO; Episodes section still depends on Render backend at runtime (cold-start risk) — candidate for the Worker/KV migration.
+
 ## 2026-06-18 — macbook-thomas — Host photos: new Thomas photo + bg-removed cutouts
 
 Did:

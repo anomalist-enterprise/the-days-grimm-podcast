@@ -140,10 +140,10 @@ const Episodes: React.FC = () => {
 
             {/* Loading/Error States */}
             {loading && (
-              <div className="bg-dark/50 backdrop-blur-sm rounded-2xl border border-white/60 p-8 max-w-4xl mx-auto mb-16 text-center text-text-muted shadow-xl shadow-white/20">Loading…</div>
+              <div className="bg-dark/50 backdrop-blur-sm rounded-2xl border border-primary/25 p-8 max-w-4xl mx-auto mb-16 text-center text-text-muted shadow-xl shadow-black/40">Loading…</div>
             )}
             {error && (
-              <div className="bg-dark/50 backdrop-blur-sm rounded-2xl border border-white/60 p-8 max-w-4xl mx-auto mb-16 text-center text-red-400 shadow-xl shadow-white/20">{error}</div>
+              <div className="bg-dark/50 backdrop-blur-sm rounded-2xl border border-primary/25 p-8 max-w-4xl mx-auto mb-16 text-center text-red-400 shadow-xl shadow-black/40">{error}</div>
             )}
           </>
         )}
@@ -155,7 +155,7 @@ const Episodes: React.FC = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="bg-dark/50 backdrop-blur-sm rounded-2xl border border-white/60 p-8 max-w-4xl mx-auto mb-16 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-white/30 hover:bg-dark/60 shadow-xl shadow-white/20"
+            className="bg-dark/50 backdrop-blur-sm rounded-2xl border border-primary/25 p-8 max-w-4xl mx-auto mb-16 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 hover:bg-dark/60 shadow-xl shadow-black/40"
             style={{ minHeight: '540px' }}
           >
             <div
@@ -261,7 +261,7 @@ const Episodes: React.FC = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="bg-dark/50 backdrop-blur-sm rounded-2xl border border-white/60 p-8 max-w-4xl mx-auto mb-16 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-white/30 hover:bg-dark/60 shadow-xl shadow-white/20"
+            className="bg-dark/50 backdrop-blur-sm rounded-2xl border border-primary/25 p-8 max-w-4xl mx-auto mb-16 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 hover:bg-dark/60 shadow-xl shadow-black/40"
           >
             {/* Title moved above image with gradient styling */}
             <div className="mb-4 sm:mb-6 text-center ">
@@ -322,7 +322,7 @@ const Episodes: React.FC = () => {
           {recentEpisodes.map((episode, index) => (
             <div
               key={episode.id || `${episode.title}-${index}`}
-              className="bg-dark/50 backdrop-blur-sm rounded-2xl border border-white/60 p-6 relative overflow-hidden flex flex-col text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-white/30 hover:bg-dark/60 shadow-xl shadow-white/20"
+              className="bg-dark/50 backdrop-blur-sm rounded-2xl border border-primary/25 p-6 relative overflow-hidden flex flex-col text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 hover:bg-dark/60 shadow-xl shadow-black/40"
             >
               {/* Episode number badge intentionally removed per request */}
               <div
