@@ -1,5 +1,36 @@
 # DEVLOG — The Days Grimm Podcast
 
+## 2026-06-18 — macbook-thomas — Cloudflare migration phase 2: backend as Pages Functions + cutover
+
+Did:
+- **Episodes backend → Pages Function** `functions/api/episodes.js`: keyless, reads the "Full Length Episodes" playlist RSS (PLEU_P6cu46UblHKQr3cADL3nIxWNoUddq), parses to Episode[], KV-cached (1h). VERIFIED on pages.dev: 15 eps, #267 featured, real dates/thumbnails. Render backend replaced for episodes.
+- **Hero embed** repointed to the Full Length Episodes playlist (no Shorts).
+- **Blog → Pages Function** `functions/api/blog/reddit.js` (r/thedaysgrimm, flair "Official Blog", KV-cached). BUT Reddit **403s Cloudflare IPs** — returns {posts:[]} gracefully → Blog section shows its "Coming Soon" state. Decision: cut over now with "Coming soon" blog; real blog = D1 AI-written (next).
+- **wrangler.toml** (Pages: pages_build_output_dir=dist, KV binding EPISODES_CACHE id 86cb8728…).
+- Blog playlists for reference: Full Length=PLEU_P6cu46UblHKQr3cADL3nIxWNoUddq, DOTW=PLEU_P6cu46UbwTka6USmepiRYbmzGNnRk, Comedy Cache=PLEU_P6cu46UZuBj4TlINjFmkDbIetyGUK.
+
+Cutover (live DNS — see next note): apex A 216.198.79.1 + www CNAME 91f219462bd02a6f.vercel-dns-017.com → repoint to the-days-grimm.pages.dev. ROLLBACK = restore those two values. Keep all TXT/email (DMARC/DKIM/SPF/_vercel) records.
+
+## 2026-06-18 — macbook-thomas — Cloudflare migration: frontend live on Pages (phase 1)
+
+State of the Cloudflare account (token works; stored at ~/.config/tdg/cloudflare.env, chmod 600, OUTSIDE repo — not committed):
+- **Zone thedaysgrimm.com is ALREADY ACTIVE on Cloudflare** (NS peaches/vern.ns.cloudflare.com; was Google Domains). DNS today: apex `A 216.198.79.1` + `www CNAME …vercel-dns` (both proxied) → still serving the Vercel site. Email records (DMARC/DKIM/SPF) present — must NOT touch on cutover.
+- Account ID cc756da0…; Zone ID e517dc97… (non-secret; in env file).
+
+Did (all NON-destructive — live Vercel site untouched):
+- Created **KV namespace** EPISODES_CACHE (id 86cb87280cf843a3b450c4d2040d0ca4).
+- Created **Pages project** `the-days-grimm` and deployed the frontend build → **https://the-days-grimm.pages.dev** (verified: 200, security headers applied, Anton renders under CSP, YouTube latest-episode embed loads).
+- **CSP fix**: added `https://fonts.googleapis.com` (style-src) + `https://fonts.gstatic.com` (font-src) to vercel.json AND new `frontend/public/_headers` — fonts were at risk of being blocked once CSP enforced. Added `_redirects` (`/* /index.html 200`) for SPA.
+
+Blocked / decisions:
+- **R2 NOT enabled** (API can't enable; dashboard toggle). BUT not needed — Pages CDN serves hero.mp4 fine; R2 deferred as pure optimization.
+- **Backend not migrated yet.** Plan: Pages Functions `functions/api/episodes` + `functions/api/blog/reddit` with KV cache (same Pages project, same-origin /api, no CORS, no separate Worker). DECISION NEEDED: episodes via YouTube Data API (needs YOUTUBE_API_KEY secret; keeps viewCount/duration/upcoming) vs keyless RSS feed (no quota/secret; loses upcoming + durations).
+- **Hero embed shows newest upload incl. Shorts** (currently a #shorts). If they have a dedicated episodes playlist, point embed at that.
+
+NEXT: (1) backend decision → build Pages Functions; (2) cutover apex+www DNS to Pages (CONFIRM-FIRST, live-affecting; keep email records); (3) later D1 blog + Workers AI.
+
+Uncommitted: vercel.json (CSP), frontend/public/_headers, frontend/public/_redirects, this DEVLOG.
+
 ## 2026-06-18 — macbook-thomas — Visual redesign (round 2): FAQ + AEO + section polish
 
 Did:

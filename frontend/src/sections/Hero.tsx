@@ -5,9 +5,10 @@ interface HeroProps {
   scrollToSection: (sectionId: string) => void
 }
 
-// Uploads playlist (UC… -> UU…) always resolves to the newest upload — no backend/API needed.
+// "Full Length Episodes" playlist — always resolves to the newest full episode
+// (excludes Shorts/clips). No backend/API key needed.
 const YOUTUBE_LATEST =
-  'https://www.youtube-nocookie.com/embed/videoseries?list=UUHHNbhsJepjr0rsWh1FNjgQ&rel=0'
+  'https://www.youtube-nocookie.com/embed/videoseries?list=PLEU_P6cu46UblHKQr3cADL3nIxWNoUddq&rel=0'
 
 const SPOTIFY = 'https://open.spotify.com/show/3JLH1IVdjohOrAOoXTsk18'
 const APPLE = 'https://podcasts.apple.com/us/podcast/the-days-grimm-podcast/id1545803797'

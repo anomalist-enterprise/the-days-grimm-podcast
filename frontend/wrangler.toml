@@ -1,0 +1,8 @@
+name = "the-days-grimm"
+pages_build_output_dir = "./dist"
+compatibility_date = "2024-11-01"
+
+# Persistent edge cache for /api/episodes and /api/blog/reddit
+[[kv_namespaces]]
+binding = "EPISODES_CACHE"
+id = "86cb87280cf843a3b450c4d2040d0ca4"

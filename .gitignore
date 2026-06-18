@@ -187,3 +187,6 @@ pnpm-lock.yaml
 
 # Local Netlify folder
 .netlify
+
+# Cloudflare wrangler
+.wrangler/
