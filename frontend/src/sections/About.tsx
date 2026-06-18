@@ -20,19 +20,19 @@ const About: React.FC = () => {
       icon: Laugh,
       title: "Comical",
       description: "Official genre of 'COMEDY INTERVIEWS' with a history of hosting local stand-up comedians",
-      color: "text-red-400"
+      color: "text-primary"
     },
     {
       icon: Zap,
       title: "Thrilling", 
       description: "Interviews with extraordinary individuals - shooting survivors, rare medical conditions, combat veterans",
-      color: "text-red-400"
+      color: "text-primary"
     },
     {
       icon: MessageCircle,
       title: "Controversial",
       description: "Unfiltered conversations on difficult topics like homelessness, AI, and religious hypotheticals", 
-      color: "text-red-400"
+      color: "text-primary"
     }
   ]
 

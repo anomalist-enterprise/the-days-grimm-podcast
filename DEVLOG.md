@@ -1,5 +1,19 @@
 # DEVLOG — The Days Grimm Podcast
 
+## 2026-06-18 — macbook-thomas — Visual redesign (round 2): FAQ + AEO + section polish
+
+Did:
+- **New FAQ section** (`Faq.tsx`): 7 real, grounded Q&A (positioning, hosts, where-to-listen, guests, cadence, location, contact) as a crimson accordion. Answers stay mounted (height-collapsed) so text is crawlable. Added to Home (before Contact) and to nav.
+- **FAQPage JSON-LD** added to the index.html `@graph` (now PodcastSeries + Organization + WebSite + FAQPage), text matched 1:1 to the visible section — top AEO win for ChatGPT/Perplexity citation.
+- **About**: pillar icons `text-red-400` → `text-primary` (crimson).
+- **Contact**: footer copyright `© 2025 The Days Grimm Podcast` → `© 2026 The Days Grimm LLC` (matches RSS).
+- Verified: JSON-LD valid (4 entities, 7 questions); `npm run build` green. Screenshotted FAQ/Hosts/About via playwright-core driving installed Chrome (channel:'chrome', no browser download) — `vite preview` + `document.getElementById(id).scrollIntoView()` (plain hash anchors don't scroll in headless on this SPA).
+
+Notes / NEXT:
+- Hosts cutouts + red glow and new Thomas photo confirmed rendering in real Chrome.
+- Screenshot harness lives at /tmp/shoot.js (playwright-core in /tmp/node_modules) — reusable for future visual checks.
+- Round 3 candidates: "start-here" featured episode; Blog visual polish; Episodes still runtime-depends on Render backend (cold start) — fold into Worker/KV migration.
+
 ## 2026-06-18 — macbook-thomas — Visual redesign (round 1) benchmarked vs top podcast sites
 
 Direction (Thomas's picks): blood-crimson palette · bold display headings + Inter body · embed latest YouTube episode in hero. Researched top-10 podcast sites (HEARD model; hero must let you listen in <5s, don't bounce visitors to Spotify).

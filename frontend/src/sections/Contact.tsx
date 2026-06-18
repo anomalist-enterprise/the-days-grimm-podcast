@@ -107,7 +107,7 @@ const Contact: React.FC = () => {
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
         >
-          <p>&copy; 2025 The Days Grimm Podcast. All rights reserved.</p>
+          <p>&copy; 2026 The Days Grimm LLC. All rights reserved.</p>
         </motion.div>
       </div>
     </footer>
