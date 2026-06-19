@@ -11,6 +11,7 @@ import Hosts from '../sections/Hosts'
 import Episodes from '../sections/Episodes'
 import Blog from '../sections/Blog'
 import Faq from '../sections/Faq'
+import Newsletter from '../sections/Newsletter'
 import Contact from '../sections/Contact'
 
 const Home: React.FC = () => {
@@ -64,6 +65,9 @@ const Home: React.FC = () => {
 
       {/* FAQ Section */}
       <Faq />
+
+      {/* Newsletter Section */}
+      <Newsletter />
 
       {/* Contact Section */}
       <Contact />
