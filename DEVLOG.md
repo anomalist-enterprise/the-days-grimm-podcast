@@ -1,5 +1,11 @@
 # DEVLOG — The Days Grimm Podcast
 
+## 2026-06-24 — sentinel — fix #5758: escape JSON-LD before embedding in SSR blog page
+- `functions/blog/[slug].js`: added `escJsonLd()` that escapes `<`, `>`, `&` to `\uXXXX` and applied it to the `application/ld+json` script body. `JSON.stringify` doesn't escape `</script>`, so a post field containing it could break out and run stored XSS. JSON stays valid + parses unchanged.
+- Lane: 2 (awaiting Chris) — SAST code change, no automated test suite to confirm behavior.
+- PR: #102
+- (Thanks Sentinel — standing red-team. Future devs: keep ld+json field values escaped for HTML script context.)
+
 ## 2026-06-18 — macbook-thomas — D1 AI-written blog (final feature) + weekly cron
 
 Did:

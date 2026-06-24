@@ -8,6 +8,16 @@ const esc = (s = '') =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
 
+// Escape a JSON string for safe embedding inside <script type="application/ld+json">.
+// JSON.stringify does NOT escape "</script>", so a field containing it would break
+// out of the script element (stored XSS). Replacing <, >, & with \uXXXX keeps the
+// JSON valid while making the "</script>" sequence inert in HTML script context.
+const escJsonLd = (s = '') =>
+  String(s)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+
 const htmlHeaders = () => ({
   'content-type': 'text/html; charset=utf-8',
   'content-security-policy':
@@ -52,7 +62,7 @@ const SHELL = (opts) => {
   .nav a { color:#aaa; font-size:.9rem; }
   footer { margin-top:4rem; color:#666; font-size:.85rem; border-top:1px solid #222; padding-top:1.5rem; }
 </style>
-<script type="application/ld+json">${jsonld}</script>
+<script type="application/ld+json">${escJsonLd(jsonld)}</script>
 </head>
 <body>
 <div class="wrap">
