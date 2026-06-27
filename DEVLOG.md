@@ -1,5 +1,11 @@
 # DEVLOG — The Days Grimm Podcast
 
+## 2026-06-27 — sentinel — fix #6711: escape JSON-LD before embedding in <script>
+- `frontend/functions/blog/[slug].js`: added `escapeJsonLd()` (escapes `<` `>` `&` to `\uXXXX`) and applied it to the Article JSON-LD before it's interpolated into `<script type="application/ld+json">`. Prevents a post title/excerpt containing `</script>` from breaking out of the script element. Output JSON still parses identically.
+- Lane: 2 (awaiting Chris) — SAST code change, no unit-test suite in repo, Thomas-owned public repo.
+- PR: #104
+- (Thanks Sentinel — see `Sentinel finding #6711`.)
+
 ## 2026-06-18 — macbook-thomas — D1 AI-written blog (final feature) + weekly cron
 
 Did:
