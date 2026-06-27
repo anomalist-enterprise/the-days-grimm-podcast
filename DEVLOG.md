@@ -1,5 +1,12 @@
 # DEVLOG — The Days Grimm Podcast
 
+## 2026-06-26 — sentinel — fix #6710: stop leaking internal error/config details to clients
+- subscribe.js / blog/generate.js / blog/posts.js now return a generic error and log the real exception via console.error server-side (removed `message`/`error: String(e)` fields).
+- backend/routes/blog.js: dropped the `debug` object (subreddit config + upstream status) and raw exception text from the `/api/blog/reddit` responses; debug info is logged server-side only.
+- Lane: 2 (awaiting Chris) — SAST code change, no test suite in repo.
+- PR: #103
+- (Thanks Sentinel — standing red-team. See finding #6710.)
+
 ## 2026-06-24 — sentinel — fix #5758: escape JSON-LD before embedding in SSR blog page
 - `functions/blog/[slug].js`: added `escJsonLd()` that escapes `<`, `>`, `&` to `\uXXXX` and applied it to the `application/ld+json` script body. `JSON.stringify` doesn't escape `</script>`, so a post field containing it could break out and run stored XSS. JSON stays valid + parses unchanged.
 - Lane: 2 (awaiting Chris) — SAST code change, no automated test suite to confirm behavior.

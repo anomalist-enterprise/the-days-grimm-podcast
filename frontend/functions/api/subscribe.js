@@ -32,6 +32,7 @@ export async function onRequest(context) {
       .run()
     return json({ ok: true })
   } catch (e) {
-    return json({ error: 'Something went wrong. Try again.', message: String(e).slice(0, 100) }, 500)
+    console.error('subscribe failed:', e)
+    return json({ error: 'Something went wrong. Try again.' }, 500)
   }
 }

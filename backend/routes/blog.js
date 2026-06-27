@@ -241,19 +241,16 @@ router.get('/reddit', async (req, res) => {
       console.log('No posts found after trying all methods');
     }
 
-    const payload = {
-      posts,
-      debug: debug ? {
+    if (debug) {
+      // Debug details are logged server-side only, never returned to clients.
+      console.log('Reddit fetch debug:', {
         request: { subreddit, requiredFlair, allowedAuthor, limit },
-        apiMethod: apiMethod,
-        postsFound: posts.length,
-        sample: posts.slice(0, 3).map(post => ({
-          id: post.id,
-          title: post.title?.substring(0, 50) + '...',
-          author: post.author
-        }))
-      } : undefined
-    };
+        apiMethod,
+        postsFound: posts.length
+      });
+    }
+
+    const payload = { posts };
 
     // Store in cache and set cache headers
     redditCache.set(cacheKey, { ts: Date.now(), payload });
@@ -274,14 +271,8 @@ router.get('/reddit', async (req, res) => {
       requiredFlair: process.env.REDDIT_REQUIRED_FLAIR
     });
     
-    res.status(status).json({
+    res.status(status >= 500 ? 502 : status).json({
       error: 'Failed to fetch posts from Reddit',
-      message: status === 403 ? 'Reddit blocked the request (403 Forbidden)' : (data?.message || error.message),
-      debug: {
-        status,
-        subreddit: process.env.REDDIT_SUBREDDIT?.replace(/^\/?r\//i, '').trim(),
-        isHTMLResponse: typeof data === 'string' && data.includes('<html')
-      },
       posts: []
     });
   }

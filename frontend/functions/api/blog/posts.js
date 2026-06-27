@@ -18,6 +18,7 @@ export async function onRequest(context) {
       .all()
     return json({ posts: results || [] })
   } catch (e) {
-    return json({ posts: [], error: String(e).slice(0, 120) })
+    console.error('blog posts query failed:', e)
+    return json({ posts: [], error: 'Failed to load posts.' })
   }
 }
