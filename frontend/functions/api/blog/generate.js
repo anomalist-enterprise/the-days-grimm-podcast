@@ -133,6 +133,7 @@ export async function onRequest(context) {
 
     return json({ ok: true, slug, title: gen.title, episode: target.title })
   } catch (e) {
-    return json({ error: 'generation failed', message: String(e).slice(0, 200) }, 500)
+    console.error('blog generate failed:', e)
+    return json({ error: 'generation failed' }, 500)
   }
 }
