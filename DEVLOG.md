@@ -1,5 +1,12 @@
 # DEVLOG — The Days Grimm Podcast
 
+## 2026-07-19 — sentinel — fix #5757: remove dead Reddit-scraping route (spoofed UA / ToS bypass)
+- `backend/routes/blog.js` (Express/Render backend) fetched Reddit's RSS endpoint with a spoofed desktop-Chrome `User-Agent` specifically to dodge Reddit's 403 bot blocking — a ToS/CFAA exposure per the company scraping policy. The route was already dead: the live blog has read from D1 (`functions/api/blog/posts.js`) since the 2026-06-18 Cloudflare migration, and the Pages Functions copy of this route was removed then too (see DEVLOG 2026-06-18). Confirmed nothing in `frontend/` calls `/api/blog/reddit` anymore.
+- Deleted `backend/routes/blog.js` and its mount in `backend/server.js` ("kill" per the IP & scraping policy's keep/change-source/kill framework — no live traffic depends on it, so there's no reason to keep bypassing Reddit's bot detection).
+- Lane: 2 (awaiting Chris) — compliance/judgment-call finding, no automated test suite in this repo.
+- PR: #TBD
+- (Thanks Sentinel — standing red-team. See finding #5757.)
+
 ## 2026-06-26 — sentinel — fix #6710: stop leaking internal error/config details to clients
 - subscribe.js / blog/generate.js / blog/posts.js now return a generic error and log the real exception via console.error server-side (removed `message`/`error: String(e)` fields).
 - backend/routes/blog.js: dropped the `debug` object (subreddit config + upstream status) and raw exception text from the `/api/blog/reddit` responses; debug info is logged server-side only.
