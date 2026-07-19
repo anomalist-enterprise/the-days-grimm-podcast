@@ -6,7 +6,6 @@ require('dotenv').config();
 
 // Import routes
 const episodesRouter = require('./routes/episodes');
-const blogRouter = require('./routes/blog');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,9 +34,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Blog router
-app.use('/api/blog', blogRouter);
-
 // Use episodes router
 app.use('/api', episodesRouter);
 
@@ -62,6 +58,5 @@ app.use('/{*splat}', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 The Days Grimm Backend API running on port ${PORT}`);
   console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`📝 Blog API: http://localhost:${PORT}/api/blog`);
   console.log(`🎙️  Episodes API: http://localhost:${PORT}/api/episodes`);
 });
