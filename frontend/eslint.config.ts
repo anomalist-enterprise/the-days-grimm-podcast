@@ -37,6 +37,18 @@ export default tseslint.config(
     },
   },
   {
+    // Cloudflare Pages Functions (functions/**/*.js) run in the Workers runtime.
+    // The .ts block above sets globals but .js files matched no globals block,
+    // so no-undef fired on URL/Response/fetch/console. Declare them here.
+    files: ['**/*.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+  },
+  {
     ignores: ['dist', '.eslintrc.cjs'],
   },
 ) 
