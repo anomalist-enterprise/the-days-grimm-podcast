@@ -1,7 +1,9 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_PRINTFUL_API_KEY: string
+  // NOTE: Never declare private/vendor secrets here. Any VITE_-prefixed var is
+  // inlined into the client bundle at build time. Keep keys (e.g. Printful)
+  // server-side in a Pages Function/Worker secret and proxy calls through it.
   // more env variables...
 }
 
