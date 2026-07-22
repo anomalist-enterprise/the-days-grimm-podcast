@@ -1,5 +1,12 @@
 # DEVLOG — The Days Grimm Podcast
 
+## 2026-07-21 — sentinel — fix #6708: rate limit the public newsletter subscribe endpoint
+- `functions/api/subscribe.js`: added a per-IP fixed-window rate limit (5 requests / 10 min) ahead of the honeypot/validation/INSERT, reusing the existing `EPISODES_CACHE` KV binding — no new wrangler.toml binding needed. Fails open if KV/IP is unavailable so legit signups never hard-block.
+- Honeypot + regex validation alone let any script that skips the hidden field flood D1 `subscribers` with unlimited junk emails; Turnstile was scoped in REFRESH_AND_CLOUDFLARE_PLAN.md but never wired up — this closes the gap with the lighter KV-only fix instead of adding a new binding/dependency.
+- Lane: 2 (awaiting Chris) — no test suite in repo.
+- PR: #115
+- (Thanks Sentinel — standing red-team. See finding #6708.)
+
 ## 2026-06-26 — sentinel — fix #6710: stop leaking internal error/config details to clients
 - subscribe.js / blog/generate.js / blog/posts.js now return a generic error and log the real exception via console.error server-side (removed `message`/`error: String(e)` fields).
 - backend/routes/blog.js: dropped the `debug` object (subreddit config + upstream status) and raw exception text from the `/api/blog/reddit` responses; debug info is logged server-side only.
