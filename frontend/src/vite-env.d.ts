@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_PRINTFUL_API_KEY: string
+  // Printful API calls are proxied through the backend; no VITE_ secret needed here.
   // more env variables...
 }
 
