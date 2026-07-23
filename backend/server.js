@@ -43,10 +43,10 @@ app.use('/api', episodesRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
+  // Log full detail server-side only; never return exception text to the client.
   console.error(err.stack);
-  res.status(500).json({ 
-    error: 'Something went wrong!',
-    message: err.message 
+  res.status(500).json({
+    error: 'Something went wrong!'
   });
 });
 
