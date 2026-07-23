@@ -1,5 +1,11 @@
 # DEVLOG — The Days Grimm Podcast
 
+## 2026-07-23 — sentinel — fix #13579: stop leaking exception text from Express error handler
+- `backend/server.js`: the top-level error middleware returned `err.message` straight to the client; now returns a generic message while still logging `err.stack` server-side. `frontend/functions/api/blog/posts.js` was already fixed under #6710 (no change needed).
+- Lane: 2 (awaiting Chris) — backend has no real test suite (`"test": "exit 1"` placeholder).
+- PR: #118
+- (Thanks Sentinel — standing red-team. See finding #13579.)
+
 ## 2026-06-26 — sentinel — fix #6710: stop leaking internal error/config details to clients
 - subscribe.js / blog/generate.js / blog/posts.js now return a generic error and log the real exception via console.error server-side (removed `message`/`error: String(e)` fields).
 - backend/routes/blog.js: dropped the `debug` object (subreddit config + upstream status) and raw exception text from the `/api/blog/reddit` responses; debug info is logged server-side only.
