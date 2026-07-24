@@ -1,5 +1,12 @@
 # DEVLOG — The Days Grimm Podcast
 
+## 2026-07-23 — sentinel — fix #15658: tighten CSP script-src (drop unsafe-inline/unsafe-eval)
+- `frontend/public/_headers`, `vercel.json`, `vite.config.prod.ts`: script-src narrowed from `'self' 'unsafe-inline' 'unsafe-eval'` to `'self'`. No inline `<script>` JS or eval/`new Function` usage found in `frontend/src`; the app's only entry point is the external module script `/src/main.tsx`, so this shouldn't change runtime behavior.
+- style-src left untouched (Tailwind/inline styles still need `'unsafe-inline'` there).
+- Lane: 2 (awaiting Chris) — no test suite in repo to confirm, so wants a human look/prod smoke test before merge.
+- PR: #122
+- (Thanks Sentinel — standing red-team. See finding #15658.)
+
 ## 2026-06-26 — sentinel — fix #6710: stop leaking internal error/config details to clients
 - subscribe.js / blog/generate.js / blog/posts.js now return a generic error and log the real exception via console.error server-side (removed `message`/`error: String(e)` fields).
 - backend/routes/blog.js: dropped the `debug` object (subreddit config + upstream status) and raw exception text from the `/api/blog/reddit` responses; debug info is logged server-side only.
